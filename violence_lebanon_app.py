@@ -88,7 +88,7 @@ with st.expander("Key Insights"):
         """
 - The number of events isn’t steady across the year. **Late 2023**, especially in **December**, shows the highest recorded incidents **(830 events)**, which drove totals up sharply.  
 - Events and fatalities don’t always move together. In **July 2017**, only **43 events** were recorded. However, they caused **183 fatalities**, showing that impact can outweigh frequency.  
-- Other peaks also appear in earlier years, such as **March 2016** and the **summer of 2017**, which likely connect to episodes of conflict and unrest in Lebanon that were happening at the time.   
+- Other peaks also appear in earlier years, such as **March 2016** and **July/August 2017**, which likely connect to episodes of conflict and unrest in Lebanon that were happening at the time.   
         """
     )
 
