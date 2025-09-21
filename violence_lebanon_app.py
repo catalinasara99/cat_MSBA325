@@ -41,7 +41,7 @@ def load_data(path: str) -> pd.DataFrame:
 
 from pathlib import Path
 
-DATA_PATH = Path(r"C:\Users\catal\OneDrive\Desktop\Catalina - MSBA325 - ViolenceLeb\violenceleb_rawdata.csv")
+DATA_PATH = Path(__file__).with_name("violenceleb_rawdata.csv")  # must match the file name in GitHub exactly
 df = load_data(DATA_PATH)
 
 
