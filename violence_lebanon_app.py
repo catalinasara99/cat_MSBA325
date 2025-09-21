@@ -71,11 +71,9 @@ with st.expander("Key Insights"):
     st.markdown(
         """
 **Key Insights**
-- The data isn’t flat across the year — October to December often stand out with sharp spikes that change the whole yearly picture.  
-- Events and fatalities don’t always move together. Some months are “busy” but not deadly, while others are quieter but more severe.  
-- Months with no events show Severity as blank rather than zero, so we don’t mistake silence for safety.  
-- Patterns repeat in some years, hinting at seasonality, but sudden shocks also show up.  
-- These jumps may line up with real-world moments of unrest in Lebanon, though here we’re just focusing on what the numbers show.  
+- The number of **events** isn’t steady across the year. **Late 2023**, especially **December (830 events)**, shows the highest recorded incidents, which drove totals up sharply.  
+- **Events and fatalities don’t always move together.** In **July 2017**, only **43 events** were recorded, but they caused **183 fatalities**, showing that impact can outweigh frequency.  
+- Other peaks also appear in earlier years, such as **March 2016** and the **summer of 2017**, which likely connect to episodes of conflict and unrest in Lebanon at the time.   
         """
     )
 
@@ -87,12 +85,3 @@ heat = ym.pivot(index="refPeriod", columns="Month", values=metric).reindex(colum
 fig2 = px.imshow(heat, aspect="auto", origin="lower", labels=dict(x="Month", y="Year", color=metric), color_continuous_scale="YlOrRd")
 st.plotly_chart(fig2, use_container_width=True)
 
-with st.expander("Methods & Choices"):
-    st.markdown(
-        """
-- Metrics are aggregated monthly by year; Severity = fatalities ÷ events.  
-- Periods with zero events are shown as blank (NaN) to avoid misleading zeros.  
-- Interactivity: **Year range**, **Month filter**, and **Metric toggle**.  
-- Line chart shows change over time; heatmap highlights seasonal hot spots.  
-        """
-    )
