@@ -67,6 +67,7 @@ c3.metric("Fatalities | Sev", f"{int(totals['Fatalities']):,} | {sev_total:.2f}"
 st.divider()
 
 #First Visual - Line chart 
+st.subheader("Trend of Conflict Events, Fatalities & Severity Over Time")
 series = fdf.groupby("date", as_index=False).agg(Events=("Events", "sum"), Fatalities=("Fatalities", "sum"))
 series["Severity"] = severity(series["Events"], series["Fatalities"])
 fig1 = px.line(series, x="date", y=metric, markers=True, labels={"date": "Month", metric: metric})
@@ -74,6 +75,7 @@ st.plotly_chart(fig1, use_container_width=True)
 
 
 #Second Visual - Heat Map
+st.subheader("Monthly Distribution of Selected Metric by Year")
 ym = fdf.groupby(["refPeriod", "Month", "month_num"], as_index=False).agg(Events=("Events", "sum"), Fatalities=("Fatalities", "sum"))
 ym["Severity"] = severity(ym["Events"], ym["Fatalities"])
 months_jan_dec = [m for m in calendar.month_name if m]
