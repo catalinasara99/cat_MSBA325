@@ -4,23 +4,13 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-
-
 from pathlib import Path
-
-DATA_PATH = Path(__file__).with_name("violenceleb_rawdata.csv")
-
-try:
-    df = load_data(DATA_PATH)
-except Exception as e:
-    st.error(f"❌ Failed to load data: {e}")
-    st.stop()
-
+import os
 
 st.set_page_config(page_title="Lebanon Violence Explorer", layout="wide")
 
 @st.cache_data
-def load_data(path: str) -> pd.DataFrame:
+def load_data(path) -> pd.DataFrame:
     df = pd.read_csv(path)
     df.columns = [c.strip() for c in df.columns]
 
@@ -37,25 +27,41 @@ def load_data(path: str) -> pd.DataFrame:
     df["month_num"] = df["Month"].map(month_map)
 
     # types
-    df["refPeriod"] = pd.to_numeric(df["refPeriod"], errors="coerce")
-    df["Events"] = pd.to_numeric(df["Events"], errors="coerce")
-    df["Fatalities"] = pd.to_numeric(df["Fatalities"], errors="coerce")
+    df["refPeriod"]   = pd.to_numeric(df["refPeriod"], errors="coerce")
+    df["Events"]      = pd.to_numeric(df["Events"], errors="coerce")
+    df["Fatalities"]  = pd.to_numeric(df["Fatalities"], errors="coerce")
 
     df = df.dropna(subset=["refPeriod", "month_num"])
     df["date"] = pd.to_datetime(
         dict(year=df["refPeriod"].astype(int), month=df["month_num"].astype(int), day=1)
     )
 
-    # vectorized severity (avoid row-wise apply)
-    sev = np.divide(df["Fatalities"], df["Events"], out=np.zeros_like(df["Fatalities"], dtype=float), where=df["Events"].to_numpy()!=0)
+    # vectorized severity
+    sev = np.divide(
+        df["Fatalities"],
+        df["Events"],
+        out=np.zeros_like(df["Fatalities"], dtype=float),
+        where=df["Events"].to_numpy() != 0,
+    )
     df["Severity"] = np.nan_to_num(sev, nan=0.0, posinf=0.0, neginf=0.0)
     return df
 
-from pathlib import Path
+# --- load data (relative to this file), with a friendly fallback on Cloud
+DATA_PATH = Path(__file__).with_name("violenceleb_rawdata.csv")
+try:
+    if os.path.exists(DATA_PATH):
+        df = load_data(DATA_PATH)
+    else:
+        st.warning(f"CSV not found at: {DATA_PATH}. Upload the file below or fix the name.")
+        uploaded = st.file_uploader("Upload violenceleb_rawdata.csv", type="csv")
+        if uploaded is None:
+            st.stop()
+        df = load_data(uploaded)
+except Exception as e:
+    st.error(f"❌ Failed to load data: {e}")
+    st.stop()
 
-DATA_PATH = Path(__file__).with_name("violenceleb_rawdata.csv")  # must match the file name in GitHub exactly
-df = load_data(DATA_PATH)
-
+# ===================== UI =====================
 
 st.title("Lebanon Violence Explorer")
 st.caption("ACLED/CODEC extract with monthly aggregation: refPeriod (year), Month, Events, Fatalities.")
@@ -63,7 +69,7 @@ st.caption("ACLED/CODEC extract with monthly aggregation: refPeriod (year), Mont
 # sidebar
 years = sorted(df["refPeriod"].dropna().astype(int).unique())
 year_range = st.sidebar.slider("Year range", min(years), max(years), (min(years), max(years)))
-months = [m for m in calendar.month_name if m]
+months = [m for m in calendar.month_name if m]  # Jan..Dec
 sel_months = st.sidebar.multiselect("Months", months, default=months)
 metric = st.sidebar.radio("Metric", ["Events", "Fatalities", "Severity"], horizontal=True)
 smooth = st.sidebar.checkbox("3-month moving average (time series)", value=True)
