@@ -5,6 +5,18 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+
+from pathlib import Path
+
+DATA_PATH = Path(__file__).with_name("violenceleb_rawdata.csv")
+
+try:
+    df = load_data(DATA_PATH)
+except Exception as e:
+    st.error(f"❌ Failed to load data: {e}")
+    st.stop()
+
+
 st.set_page_config(page_title="Lebanon Violence Explorer", layout="wide")
 
 @st.cache_data
