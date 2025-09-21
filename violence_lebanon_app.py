@@ -99,4 +99,5 @@ with st.expander("Methods & Choices"):
 
 # Data preview
 st.subheader("Filtered data")
-st.dataframe(fdf[["refPeriod", "Month", "Events", "Fatalities", "Severity", "date"]].sort_values(["refPeriod", "month_num"]), use_container_width=True)
+preview = fdf.sort_values(["refPeriod", "date"])[["refPeriod", "Month", "Events", "Fatalities", "Severity", "date"]]
+st.dataframe(preview, use_container_width=True)
