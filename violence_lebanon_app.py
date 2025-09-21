@@ -96,8 +96,3 @@ with st.expander("Methods & Choices"):
 - Line chart shows change over time; heatmap highlights seasonal hot spots.  
         """
     )
-
-# Data preview
-st.subheader("Filtered data")
-preview = fdf.sort_values(["refPeriod", "date"])[["refPeriod", "Month", "Events", "Fatalities", "Severity", "date"]]
-st.dataframe(preview, use_container_width=True)
